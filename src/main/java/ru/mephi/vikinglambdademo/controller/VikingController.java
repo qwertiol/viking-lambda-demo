@@ -39,7 +39,18 @@ public class VikingController {
         return List.of("Ragnar", "Bjorn");
     }
 
-    // Реализовать метод для добавления конкретного викинга
+    // Пост случайного викинга
+    @PostMapping("/post")
+    @Operation(summary = "Create random viking")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Случайный викинг добавлен")})
+    public Viking addRandomViking() {
+        System.out.println("POST /api/vikings/post called");
+        Viking saved = vikingService.createRandomViking(); // сервис сам добавляет в список
+        vikingListener.onVikingAdded(saved);
+        return saved;
+    }
+
+    // Пост кастомного викинга
     @PostMapping
     @Operation(summary = "Create custom viking")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Викинг добавлен")})
@@ -50,7 +61,6 @@ public class VikingController {
         return saved;
     }
 
-    // Реализовать метод для удаления викинга из таблицы
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete viking by ID")
     @ApiResponses({
@@ -66,7 +76,6 @@ public class VikingController {
         return deleted;
     }
 
-    // Реализовать метод для перезаписи параметров конкретного викинга
     @PutMapping("/{id}")
     @Operation(summary = "Update viking by ID")
     @ApiResponses({
@@ -80,12 +89,5 @@ public class VikingController {
             vikingListener.onVikingUpdated(updatedViking);
         }
         return updated;
-    }
-
-    // НАДО // получается неоднородная (разная) реализация 
-    @PostMapping("/post")
-    @Operation(summary = "Create random viking")
-    public void addRandomViking() {
-        vikingListener.testAdd();
     }
 }

@@ -20,27 +20,21 @@ public class VikingListener {
         this.gui = gui;
     }
 
-    // Вызывается при добавлении случайного викинга через старую кнопку
-    void testAdd() {
-        Viking v = service.createRandomViking();
-        gui.addNewViking(v);
-    }
-
-    // Реализовать метод для добавления конкретного викинга
+    // Вызывается при добавлении викинга (случайного + кастомного)
     public void onVikingAdded(Viking viking) {
         if (gui != null) {
             gui.addNewViking(viking);
         }
     }
 
-    // Реализовать метод для удаления викинга из таблицы
+    // Вызывается при удалении викинга
     public void onVikingDeleted(String id) {
         if (gui != null) {
             gui.removeVikingById(id);
         }
     }
 
-    // Реализовать метод для перезаписи параметров конкретного викинга
+    // Вызывается при обновлении викинга
     public void onVikingUpdated(Viking viking) {
         if (gui != null) {
             gui.updateViking(viking);
