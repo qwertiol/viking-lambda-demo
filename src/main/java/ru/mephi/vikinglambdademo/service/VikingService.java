@@ -5,6 +5,8 @@ import ru.mephi.vikinglambdademo.model.Viking;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
@@ -27,18 +29,15 @@ public class VikingService {
         return viking;
     }
 
-    // Реализовать метод для добавления конкретного викинга
     public Viking addViking(Viking viking) {
         vikings.add(viking);
         return viking;
     }
 
-    // Реализовать метод для удаления викинга из таблицы
     public boolean deleteViking(String id) {
         return vikings.removeIf(v -> v.id().equals(id));
     }
 
-    // Реализовать метод для перезаписи параметров конкретного викинга
     public boolean updateViking(String id, Viking updatedViking) {
         for (int i = 0; i < vikings.size(); i++) {
             if (vikings.get(i).id().equals(id)) {
@@ -47,5 +46,14 @@ public class VikingService {
             }
         }
         return false;
+    }
+
+    // добавлено
+    public void generateMassVikings(int count) {
+        if (count <= 0) return;
+        List<Viking> newVikings = IntStream.range(0, count)
+                .mapToObj(i -> vikingFactory.createRandomViking())
+                .collect(Collectors.toList());
+        vikings.addAll(newVikings);
     }
 }

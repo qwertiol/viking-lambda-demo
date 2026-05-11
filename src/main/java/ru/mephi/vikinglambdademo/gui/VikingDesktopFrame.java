@@ -2,20 +2,23 @@ package ru.mephi.vikinglambdademo.gui;
 
 import ru.mephi.vikinglambdademo.model.Viking;
 import ru.mephi.vikinglambdademo.service.VikingService;
+import ru.mephi.vikinglambdademo.service.VikingLambdaService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.UUID;
 
 public class VikingDesktopFrame extends JFrame {
 
     private final VikingService vikingService;
+    private final VikingLambdaService lambdaService;
     private final VikingTableModel tableModel = new VikingTableModel();
     private final JTable vikingTable;
 
-    public VikingDesktopFrame(VikingService vikingService) {
+    // конструктор принимает 2 сервиса
+    public VikingDesktopFrame(VikingService vikingService, VikingLambdaService lambdaService) {
         this.vikingService = vikingService;
+        this.lambdaService = lambdaService;
 
         setTitle("Viking Demo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,10 +48,19 @@ public class VikingDesktopFrame extends JFrame {
         JButton editButton = new JButton("Edit selected viking");
         editButton.addActionListener(e -> onEditSelected());
 
+        // добавлено
+        JButton massGenButton = new JButton("Mass generate");
+        massGenButton.addActionListener(e -> onMassGenerate());
+
+        JButton statsButton = new JButton("Statistics");
+        statsButton.addActionListener(e -> openStatsFrame());
+
         bottomPanel.add(createButton);
         bottomPanel.add(addButton);
         bottomPanel.add(deleteButton);
         bottomPanel.add(editButton);
+        bottomPanel.add(massGenButton);
+        bottomPanel.add(statsButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
@@ -98,6 +110,37 @@ public class VikingDesktopFrame extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Please select a viking to edit.");
         }
+    }
+
+    // добавлено
+    private void onMassGenerate() {
+        String input = JOptionPane.showInputDialog(this, "Enter number of vikings to generate:", "Mass Generation", JOptionPane.QUESTION_MESSAGE);
+        if (input != null) {
+            try {
+                int count = Integer.parseInt(input);
+                if (count > 0) {
+                    vikingService.generateMassVikings(count);
+                    refreshTableFromService();
+                    JOptionPane.showMessageDialog(this, "Generated " + count + " vikings.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Please enter a positive number.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid number.");
+            }
+        }
+    }
+
+    // добавлено
+    private void refreshTableFromService() {
+        tableModel.clear();
+        vikingService.findAll().forEach(tableModel::addViking);
+    }
+
+    // добавлено
+    private void openStatsFrame() {
+        VikingStatsFrame statsFrame = new VikingStatsFrame(vikingService, lambdaService);
+        statsFrame.setVisible(true);
     }
 
     // Методы для вызова из VikingListener

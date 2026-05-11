@@ -13,14 +13,12 @@ public class VikingTableModel extends AbstractTableModel {
     private final String[] columns = {"ID", "Name", "Age", "Height (cm)", "Hair color", "Beard style", "Equipment"};
     private final List<Viking> data = new ArrayList<>();
 
-    // Реализовать метод для добавления конкретного викинга
     public void addViking(Viking viking) {
         int row = data.size();
         data.add(viking);
         fireTableRowsInserted(row, row);
     }
 
-    // Реализовать метод для удаления викинга из таблицы
     public void removeViking(String id) {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).id().equals(id)) {
@@ -31,7 +29,6 @@ public class VikingTableModel extends AbstractTableModel {
         }
     }
 
-    // Реализовать метод для перезаписи параметров конкретного викинга
     public void updateViking(Viking viking) {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).id().equals(viking.id())) {
@@ -40,6 +37,12 @@ public class VikingTableModel extends AbstractTableModel {
                 break;
             }
         }
+    }
+
+    // добавлено
+    public void clear() {
+        data.clear();
+        fireTableDataChanged();
     }
 
     public Viking getVikingAt(int row) {
