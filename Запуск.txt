@@ -1,0 +1,33 @@
+В консоли:
+echo 'export PATH=$PATH:$HOME/tools/apache-maven-3.9.14/bin' >> ~/.zshrc
+source ~/.zshrc
+cd /Users/olyakulagina/NetBeansProjects/Viking_rest_demo
+mvn spring-boot:run
+
+Импорт в постман: http://localhost:8080/v3/api-docs
+
+Тела запросов:
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Ragnar",
+  "age": 30,
+  "heightCm": 185,
+  "hairColor": "Blond",
+  "beardStyle": "BRAIDED",
+  "equipment": [
+    {"name": "Axe", "quality": "Rare"},
+    {"name": "Shield", "quality": "Uncommon"}
+  ]
+}
+
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Ragnar Lothbrok",
+  "age": 31,
+  "heightCm": 185,
+  "hairColor": "Blond",
+  "beardStyle": "BRAIDED",
+  "equipment": [
+    {"name": "Axe", "quality": "Legendary"}
+  ]
+}
