@@ -20,24 +20,15 @@ public class VikingListener {
         this.gui = gui;
     }
 
-    // Вызывается при добавлении викинга (случайного + кастомного)
     public void onVikingAdded(Viking viking) {
-        if (gui != null) {
-            gui.addNewViking(viking);
-        }
+        if (gui != null) gui.addNewViking(viking);
     }
 
-    // Вызывается при удалении викинга
-    public void onVikingDeleted(String id) {
-        if (gui != null) {
-            gui.removeVikingById(id);
-        }
+    public void onVikingDeleted(int id) {
+        if (gui != null) gui.removeVikingById(id);
     }
 
-    // Вызывается при обновлении викинга
     public void onVikingUpdated(Viking viking) {
-        if (gui != null) {
-            gui.updateViking(viking);
-        }
+        if (gui != null) gui.updateViking(viking);
     }
 }

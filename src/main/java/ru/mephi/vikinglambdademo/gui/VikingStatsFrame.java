@@ -25,119 +25,166 @@ public class VikingStatsFrame extends JFrame {
     }
 
     private void initComponents() {
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(10,10));
 
-        JPanel buttonPanel = new JPanel(new GridLayout(0, 2, 5, 5));
-        buttonPanel.add(new JButton("Count older than 30"));
-        buttonPanel.add(new JButton("Count younger than 30"));
-        buttonPanel.add(new JButton("Count age between 20-40"));
-        buttonPanel.add(new JButton("Count age outside 20-40"));
-        buttonPanel.add(new JButton("Count by Beard & Hair"));
-        buttonPanel.add(new JButton("Count with 1 Axe"));
-        buttonPanel.add(new JButton("Count with 2 Axes"));
-        buttonPanel.add(new JButton("Random Viking > 180 cm"));
-        buttonPanel.add(new JButton("List Legendary Equipment"));
-        buttonPanel.add(new JButton("Red-haired sorted by age"));
-        buttonPanel.add(new JButton("Demo Integer Array Ops"));
+        JPanel buttonPanel = new JPanel(new GridLayout(0,2,5,5));
+
+        buttonPanel.add(createButton("Count older than", e -> countOlderThan()));
+        buttonPanel.add(createButton("Count younger than", e -> countYoungerThan()));
+        buttonPanel.add(createButton("Count age between", e -> countBetween()));
+        buttonPanel.add(createButton("Count age outside", e -> countOutside()));
+
+        buttonPanel.add(createButton("Count by Beard & Hair", e -> countBeardHair()));
+
+        buttonPanel.add(createButton("Count with 1 or 2 Axes", e -> countOneOrTwoAxes()));
+
+        buttonPanel.add(createButton("Random Viking > 180 cm", e -> randomTall()));
+
+        buttonPanel.add(createButton("List Legendary Equipment", e -> listLegendary()));
+
+        buttonPanel.add(createButton("Red-haired sorted by age", e -> redHairedSorted()));
+
+        buttonPanel.add(createButton("Find max ID among vikings", e -> findMaxId()));
+        buttonPanel.add(createButton("Get even IDs of vikings", e -> getEvenIds()));
 
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         outputArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        JScrollPane scrollPane = new JScrollPane(outputArea);
+        JScrollPane scroll = new JScrollPane(outputArea);
 
         add(buttonPanel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
+    }
 
-        for (Component comp : buttonPanel.getComponents()) {
-            if (comp instanceof JButton) {
-                JButton btn = (JButton) comp;
-                btn.addActionListener(e -> handleButton(btn.getText()));
+    private JButton createButton(String text, java.awt.event.ActionListener listener) {
+        JButton btn = new JButton(text);
+        btn.addActionListener(listener);
+        return btn;
+    }
+
+    private List<Viking> getVikings() {
+        return vikingService.findAll();
+    }
+
+    private void setOutput(String s) {
+        outputArea.setText(s);
+    }
+
+    private void countOlderThan() {
+        String input = JOptionPane.showInputDialog(this, "Enter age (greater than):");
+        if (input != null) {
+            try {
+                int age = Integer.parseInt(input);
+                long count = lambdaService.countOlderThan(getVikings(), age);
+                setOutput("Vikings older than " + age + ": " + count);
+            } catch (NumberFormatException ex) {
+                setOutput("Invalid number.");
             }
         }
     }
 
-    private void handleButton(String command) {
-        List<Viking> vikings = vikingService.findAll();
-        StringBuilder sb = new StringBuilder();
-        switch (command) {
-            case "Count older than 30":
-                long older = lambdaService.countOlderThan(vikings, 30);
-                sb.append("Vikings older than 30: ").append(older);
-                break;
-            case "Count younger than 30":
-                long younger = lambdaService.countYoungerThan(vikings, 30);
-                sb.append("Vikings younger than 30: ").append(younger);
-                break;
-            case "Count age between 20-40":
-                long between = lambdaService.countAgeBetween(vikings, 20, 40);
-                sb.append("Vikings age between 20 and 40: ").append(between);
-                break;
-            case "Count age outside 20-40":
-                long outside = lambdaService.countAgeOutside(vikings, 20, 40);
-                sb.append("Vikings age outside 20-40: ").append(outside);
-                break;
-            case "Count by Beard & Hair":
-                BeardStyle beard = (BeardStyle) JOptionPane.showInputDialog(this,
-                        "Select beard style:", "Beard",
-                        JOptionPane.QUESTION_MESSAGE, null, BeardStyle.values(), BeardStyle.LONG);
-                HairColor hair = (HairColor) JOptionPane.showInputDialog(this,
-                        "Select hair color:", "Hair",
-                        JOptionPane.QUESTION_MESSAGE, null, HairColor.values(), HairColor.Blond);
-                if (beard != null && hair != null) {
-                    long count = lambdaService.countByBeardAndHair(vikings, beard, hair);
-                    sb.append("Count with beard ").append(beard).append(" and hair ").append(hair).append(": ").append(count);
-                } else sb.append("Cancelled.");
-                break;
-            case "Count with 1 Axe":
-                long oneAxe = lambdaService.countWithAxes(vikings, 1);
-                sb.append("Vikings with exactly 1 axe: ").append(oneAxe);
-                break;
-            case "Count with 2 Axes":
-                long twoAxes = lambdaService.countWithAxes(vikings, 2);
-                sb.append("Vikings with exactly 2 axes: ").append(twoAxes);
-                break;
-            case "Random Viking > 180 cm":
-                Optional<Viking> randomTall = lambdaService.getRandomVikingHeightAbove180(vikings);
-                if (randomTall.isPresent()) {
-                    sb.append("Random tall viking (>180cm): ").append(vikingToString(randomTall.get()));
-                } else {
-                    sb.append("No vikings taller than 180 cm.");
-                }
-                break;
-            case "List Legendary Equipment":
-                List<Viking> legendary = lambdaService.getVikingsWithLegendaryEquipment(vikings);
-                if (legendary.isEmpty()) {
-                    sb.append("No vikings with legendary equipment.");
-                } else {
-                    sb.append("Vikings with legendary equipment:\n");
-                    legendary.forEach(v -> sb.append(vikingToString(v)).append("\n"));
-                }
-                break;
-            case "Red-haired sorted by age":
-                List<Viking> redSorted = lambdaService.getRedHairedSortedByAge(vikings);
-                if (redSorted.isEmpty()) {
-                    sb.append("No red-haired vikings.");
-                } else {
-                    sb.append("Red-haired vikings sorted by age:\n");
-                    redSorted.forEach(v -> sb.append(vikingToString(v)).append("\n"));
-                }
-                break;
-            case "Demo Integer Array Ops":
-                List<Integer> ids = List.of(5, 12, 7, 24, 33, 8, 15);
-                Optional<Integer> maxId = lambdaService.findMaxId(ids);
-                List<Integer> evenIds = lambdaService.getEvenIds(ids);
-                sb.append("Array: ").append(ids).append("\n");
-                sb.append("Max ID: ").append(maxId.orElse(null)).append("\n");
-                sb.append("Even IDs: ").append(evenIds);
-                break;
-            default:
-                sb.append("Unknown command");
+    private void countYoungerThan() {
+        String input = JOptionPane.showInputDialog(this, "Enter age (less than):");
+        if (input != null) {
+            try {
+                int age = Integer.parseInt(input);
+                long count = lambdaService.countYoungerThan(getVikings(), age);
+                setOutput("Vikings younger than " + age + ": " + count);
+            } catch (NumberFormatException ex) {
+                setOutput("Invalid number.");
+            }
         }
-        outputArea.setText(sb.toString());
     }
 
-    private String vikingToString(Viking v) {
-        return String.format("%s (age %d, height %d cm, %s hair, %s beard)",
-                v.name(), v.age(), v.heightCm(), v.hairColor(), v.beardStyle());
+    private void countBetween() {
+        String minStr = JOptionPane.showInputDialog(this, "Min age:");
+        if (minStr == null) return;
+        String maxStr = JOptionPane.showInputDialog(this, "Max age:");
+        if (maxStr == null) return;
+        try {
+            int min = Integer.parseInt(minStr);
+            int max = Integer.parseInt(maxStr);
+            long count = lambdaService.countAgeBetween(getVikings(), min, max);
+            setOutput("Vikings with age between " + min + " and " + max + ": " + count);
+        } catch (NumberFormatException ex) {
+            setOutput("Invalid number.");
+        }
+    }
+
+    private void countOutside() {
+        String minStr = JOptionPane.showInputDialog(this, "Lower bound (exclusive):");
+        if (minStr == null) return;
+        String maxStr = JOptionPane.showInputDialog(this, "Upper bound (exclusive):");
+        if (maxStr == null) return;
+        try {
+            int min = Integer.parseInt(minStr);
+            int max = Integer.parseInt(maxStr);
+            long count = lambdaService.countAgeOutside(getVikings(), min, max);
+            setOutput("Vikings with age outside [" + min + ", " + max + "]: " + count);
+        } catch (NumberFormatException ex) {
+            setOutput("Invalid number.");
+        }
+    }
+
+    private void countBeardHair() {
+        BeardStyle beard = (BeardStyle) JOptionPane.showInputDialog(this, "Select beard style:", "Beard",
+                JOptionPane.QUESTION_MESSAGE, null, BeardStyle.values(), BeardStyle.LONG);
+        if (beard == null) return;
+        HairColor hair = (HairColor) JOptionPane.showInputDialog(this, "Select hair color:", "Hair",
+                JOptionPane.QUESTION_MESSAGE, null, HairColor.values(), HairColor.Blond);
+        if (hair == null) return;
+        long count = lambdaService.countByBeardAndHair(getVikings(), beard, hair);
+        setOutput("Vikings with beard " + beard + " and hair " + hair + ": " + count);
+    }
+
+    private void countOneOrTwoAxes() {
+        long count = lambdaService.countWithOneOrTwoAxes(getVikings());
+        setOutput("Vikings with exactly 1 or 2 axes: " + count);
+    }
+
+    private void randomTall() {
+        Optional<Viking> opt = lambdaService.getRandomVikingHeightAbove180(getVikings());
+        if (opt.isPresent()) {
+            Viking v = opt.get();
+            setOutput("Random viking >180cm: " + v.name() + " (age " + v.age() + ", height " + v.heightCm() + " cm)");
+        } else {
+            setOutput("No vikings taller than 180 cm.");
+        }
+    }
+
+    private void listLegendary() {
+        List<Viking> list = lambdaService.getVikingsWithLegendaryEquipment(getVikings());
+        if (list.isEmpty()) {
+            setOutput("No vikings with legendary equipment.");
+        } else {
+            StringBuilder sb = new StringBuilder("Vikings with legendary equipment:\n");
+            list.forEach(v -> sb.append(v.name()).append(" (ID ").append(v.id()).append(")\n"));
+            setOutput(sb.toString());
+        }
+    }
+
+    private void redHairedSorted() {
+        List<Viking> list = lambdaService.getRedHairedSortedByAge(getVikings());
+        if (list.isEmpty()) {
+            setOutput("No red-haired vikings.");
+        } else {
+            StringBuilder sb = new StringBuilder("Red-haired vikings sorted by age:\n");
+            list.forEach(v -> sb.append(v.name()).append(", age ").append(v.age()).append("\n"));
+            setOutput(sb.toString());
+        }
+    }
+
+    private void findMaxId() {
+        Optional<Integer> maxId = lambdaService.findMaxId(getVikings());
+        setOutput("Maximum ID among vikings: " + (maxId.isPresent() ? maxId.get() : "none"));
+    }
+
+    private void getEvenIds() {
+        List<Integer> evenIds = lambdaService.getEvenIds(getVikings());
+        if (evenIds.isEmpty()) {
+            setOutput("No even IDs found.");
+        } else {
+            setOutput("Even IDs: " + evenIds);
+        }
     }
 }

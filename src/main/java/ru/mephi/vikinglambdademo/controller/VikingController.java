@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import ru.mephi.vikinglambdademo.model.Viking;
 import ru.mephi.vikinglambdademo.service.VikingService;
-
 import java.util.List;
 
 @RestController
@@ -24,51 +23,31 @@ public class VikingController {
     }
 
     @GetMapping
-    @Operation(summary = "Get viking list")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Список успешно получен")})
     public List<Viking> getAllVikings() {
-        System.out.println("GET /api/vikings called");
         return vikingService.findAll();
     }
 
     @GetMapping("/test")
-    @Operation(summary = "Get test viking list")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Список успешно получен")})
     public List<String> test() {
-        System.out.println("GET /api/vikings/test called");
         return List.of("Ragnar", "Bjorn");
     }
 
-    // Пост случайного викинга
     @PostMapping("/post")
-    @Operation(summary = "Create random viking")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Случайный викинг добавлен")})
     public Viking addRandomViking() {
-        System.out.println("POST /api/vikings/post called");
-        Viking saved = vikingService.createRandomViking(); // сервис сам добавляет в список
+        Viking saved = vikingService.createRandomViking();
         vikingListener.onVikingAdded(saved);
         return saved;
     }
 
-    // Пост кастомного викинга
     @PostMapping
-    @Operation(summary = "Create custom viking")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Викинг добавлен")})
     public Viking addViking(@RequestBody Viking viking) {
-        System.out.println("POST /api/vikings called with: " + viking.name());
         Viking saved = vikingService.addViking(viking);
         vikingListener.onVikingAdded(saved);
         return saved;
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete viking by ID")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Удаление выполнено"),
-        @ApiResponse(responseCode = "404", description = "Викинг не найден")
-    })
-    public boolean deleteViking(@PathVariable String id) {
-        System.out.println("DELETE /api/vikings/" + id);
+    public boolean deleteViking(@PathVariable int id) {
         boolean deleted = vikingService.deleteViking(id);
         if (deleted) {
             vikingListener.onVikingDeleted(id);
@@ -77,13 +56,7 @@ public class VikingController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update viking by ID")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Обновление выполнено"),
-        @ApiResponse(responseCode = "404", description = "Викинг не найден")
-    })
-    public boolean updateViking(@PathVariable String id, @RequestBody Viking updatedViking) {
-        System.out.println("PUT /api/vikings/" + id);
+    public boolean updateViking(@PathVariable int id, @RequestBody Viking updatedViking) {
         boolean updated = vikingService.updateViking(id, updatedViking);
         if (updated) {
             vikingListener.onVikingUpdated(updatedViking);

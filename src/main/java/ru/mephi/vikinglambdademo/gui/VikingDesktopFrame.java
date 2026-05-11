@@ -6,25 +6,22 @@ import ru.mephi.vikinglambdademo.service.VikingLambdaService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class VikingDesktopFrame extends JFrame {
-
     private final VikingService vikingService;
     private final VikingLambdaService lambdaService;
     private final VikingTableModel tableModel = new VikingTableModel();
     private final JTable vikingTable;
 
-    // конструктор принимает 2 сервиса
     public VikingDesktopFrame(VikingService vikingService, VikingLambdaService lambdaService) {
         this.vikingService = vikingService;
         this.lambdaService = lambdaService;
 
         setTitle("Viking Demo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(new Dimension(1100, 450));
+        setSize(1100, 450);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(10,10));
 
         JLabel header = new JLabel("Viking Demo", SwingConstants.CENTER);
         header.setFont(header.getFont().deriveFont(Font.BOLD, 18f));
@@ -34,87 +31,75 @@ public class VikingDesktopFrame extends JFrame {
         vikingTable.setRowHeight(28);
         add(new JScrollPane(vikingTable), BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JButton createRandom = new JButton("Create random viking");
+        createRandom.addActionListener(e -> onCreateRandomViking());
+        JButton createCustom = new JButton("Create custom viking");
+        createCustom.addActionListener(e -> onAddCustomViking());
+        JButton delete = new JButton("Delete selected viking");
+        delete.addActionListener(e -> onDeleteSelected());
+        JButton edit = new JButton("Edit selected viking");
+        edit.addActionListener(e -> onEditSelected());
+        JButton massGen = new JButton("Mass generate");
+        massGen.addActionListener(e -> onMassGenerate());
+        JButton stats = new JButton("Statistics");
+        stats.addActionListener(e -> openStatsFrame());
 
-        JButton createButton = new JButton("Create random viking");
-        createButton.addActionListener(e -> onCreateRandomViking());
-
-        JButton addButton = new JButton("Create custom viking");
-        addButton.addActionListener(this::onAddCustomViking);
-
-        JButton deleteButton = new JButton("Delete selected viking");
-        deleteButton.addActionListener(e -> onDeleteSelected());
-
-        JButton editButton = new JButton("Edit selected viking");
-        editButton.addActionListener(e -> onEditSelected());
-
-        // добавлено
-        JButton massGenButton = new JButton("Mass generate");
-        massGenButton.addActionListener(e -> onMassGenerate());
-
-        JButton statsButton = new JButton("Statistics");
-        statsButton.addActionListener(e -> openStatsFrame());
-
-        bottomPanel.add(createButton);
-        bottomPanel.add(addButton);
-        bottomPanel.add(deleteButton);
-        bottomPanel.add(editButton);
-        bottomPanel.add(massGenButton);
-        bottomPanel.add(statsButton);
-        add(bottomPanel, BorderLayout.SOUTH);
+        bottom.add(createRandom);
+        bottom.add(createCustom);
+        bottom.add(delete);
+        bottom.add(edit);
+        bottom.add(massGen);
+        bottom.add(stats);
+        add(bottom, BorderLayout.SOUTH);
     }
 
     private void onCreateRandomViking() {
-        Viking viking = vikingService.createRandomViking();
-        tableModel.addViking(viking);
+        Viking v = vikingService.createRandomViking();
+        tableModel.addViking(v);
     }
 
-    private void onAddCustomViking(ActionEvent e) {
-        VikingDialog dialog = new VikingDialog(this, "Add new Viking", null);
-        dialog.setVisible(true);
-        if (dialog.isConfirmed()) {
-            Viking newViking = dialog.getViking();
-            vikingService.addViking(newViking);
-            tableModel.addViking(newViking);
+    private void onAddCustomViking() {
+        VikingDialog dlg = new VikingDialog(this, "Add new Viking", null);
+        dlg.setVisible(true);
+        if (dlg.isConfirmed()) {
+            Viking v = dlg.getViking();
+            vikingService.addViking(v);
+            tableModel.addViking(v);
         }
     }
 
     private void onDeleteSelected() {
-        int selectedRow = vikingTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            Viking viking = tableModel.getVikingAt(selectedRow);
-            int confirm = JOptionPane.showConfirmDialog(this,
-                    "Delete " + viking.name() + "?",
-                    "Confirm deletion",
-                    JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                vikingService.deleteViking(viking.id());
-                tableModel.removeViking(viking.id());
+        int row = vikingTable.getSelectedRow();
+        if (row >= 0) {
+            Viking v = tableModel.getVikingAt(row);
+            if (JOptionPane.showConfirmDialog(this, "Delete " + v.name() + "?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                vikingService.deleteViking(v.id());
+                tableModel.removeViking(v.id());
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Please select a viking to delete.");
+            JOptionPane.showMessageDialog(this, "Select a viking to delete.");
         }
     }
 
     private void onEditSelected() {
-        int selectedRow = vikingTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            Viking original = tableModel.getVikingAt(selectedRow);
-            VikingDialog dialog = new VikingDialog(this, "Edit Viking", original);
-            dialog.setVisible(true);
-            if (dialog.isConfirmed()) {
-                Viking updated = dialog.getViking();
+        int row = vikingTable.getSelectedRow();
+        if (row >= 0) {
+            Viking original = tableModel.getVikingAt(row);
+            VikingDialog dlg = new VikingDialog(this, "Edit Viking", original);
+            dlg.setVisible(true);
+            if (dlg.isConfirmed()) {
+                Viking updated = dlg.getViking();
                 vikingService.updateViking(original.id(), updated);
                 tableModel.updateViking(updated);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Please select a viking to edit.");
+            JOptionPane.showMessageDialog(this, "Select a viking to edit.");
         }
     }
 
-    // добавлено
     private void onMassGenerate() {
-        String input = JOptionPane.showInputDialog(this, "Enter number of vikings to generate:", "Mass Generation", JOptionPane.QUESTION_MESSAGE);
+        String input = JOptionPane.showInputDialog(this, "Number of vikings to generate:");
         if (input != null) {
             try {
                 int count = Integer.parseInt(input);
@@ -122,8 +107,6 @@ public class VikingDesktopFrame extends JFrame {
                     vikingService.generateMassVikings(count);
                     refreshTableFromService();
                     JOptionPane.showMessageDialog(this, "Generated " + count + " vikings.");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Please enter a positive number.");
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid number.");
@@ -131,28 +114,16 @@ public class VikingDesktopFrame extends JFrame {
         }
     }
 
-    // добавлено
     private void refreshTableFromService() {
         tableModel.clear();
         vikingService.findAll().forEach(tableModel::addViking);
     }
 
-    // добавлено
     private void openStatsFrame() {
-        VikingStatsFrame statsFrame = new VikingStatsFrame(vikingService, lambdaService);
-        statsFrame.setVisible(true);
+        new VikingStatsFrame(vikingService, lambdaService).setVisible(true);
     }
 
-    // Методы для вызова из VikingListener
-    public void addNewViking(Viking viking) {
-        tableModel.addViking(viking);
-    }
-
-    public void removeVikingById(String id) {
-        tableModel.removeViking(id);
-    }
-
-    public void updateViking(Viking viking) {
-        tableModel.updateViking(viking);
-    }
+    public void addNewViking(Viking v) { tableModel.addViking(v); }
+    public void removeVikingById(int id) { tableModel.removeViking(id); }
+    public void updateViking(Viking v) { tableModel.updateViking(v); }
 }

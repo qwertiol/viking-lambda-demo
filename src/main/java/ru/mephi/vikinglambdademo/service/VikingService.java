@@ -2,19 +2,16 @@ package ru.mephi.vikinglambdademo.service;
 
 import org.springframework.stereotype.Service;
 import ru.mephi.vikinglambdademo.model.Viking;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class VikingService {
     private final CopyOnWriteArrayList<Viking> vikings = new CopyOnWriteArrayList<>();
     private final VikingFactory vikingFactory;
 
-    @Autowired
     public VikingService(VikingFactory vikingFactory) {
         this.vikingFactory = vikingFactory;
     }
@@ -34,13 +31,13 @@ public class VikingService {
         return viking;
     }
 
-    public boolean deleteViking(String id) {
-        return vikings.removeIf(v -> v.id().equals(id));
+    public boolean deleteViking(int id) {
+        return vikings.removeIf(v -> v.id() == id);
     }
 
-    public boolean updateViking(String id, Viking updatedViking) {
+    public boolean updateViking(int id, Viking updatedViking) {
         for (int i = 0; i < vikings.size(); i++) {
-            if (vikings.get(i).id().equals(id)) {
+            if (vikings.get(i).id() == id) {
                 vikings.set(i, updatedViking);
                 return true;
             }
@@ -48,7 +45,6 @@ public class VikingService {
         return false;
     }
 
-    // добавлено
     public void generateMassVikings(int count) {
         if (count <= 0) return;
         List<Viking> newVikings = IntStream.range(0, count)
