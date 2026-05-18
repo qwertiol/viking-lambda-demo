@@ -66,7 +66,7 @@ public class VikingLambdaService { // новый класс для дз 5 - вс
 
     public List<Viking> getRedHairedSortedByAge(List<Viking> vikings) {
         return vikings.stream()
-                .filter(v -> v.hairColor() == HairColor.Red) // отбираем
+                .filter(v -> v.hairColor() == HairColor.Red && v.beardStyle() != BeardStyle.CLEAN_SHAVEN) // отбираем
                 .sorted(Comparator.comparingInt(Viking::age)) // сортируем
                 .collect(Collectors.toList());
     }
@@ -74,6 +74,7 @@ public class VikingLambdaService { // новый класс для дз 5 - вс
     public Optional<Integer> findMaxId(List<Viking> vikings) {
         // сначала получаем инт из викинга
         // потом выбираем макс
+        // аналогично .map(v -> v.id())
         return vikings.stream().map(Viking::id).max(Comparator.naturalOrder());
     }
 
