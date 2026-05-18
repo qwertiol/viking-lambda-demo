@@ -139,18 +139,20 @@ public class VikingController {
     @GetMapping("/stats/red-haired")
     @Operation(summary = "Рыжие викинги, отсортированные по возрасту")
     public List<Viking> getRedHairedSortedByAge() {
-        return lambdaService.getRedHairedSortedByAge(vikingService.findAll());
+        return lambdaService.getRedBeardedSortedByAge(vikingService.findAll());
     }
 
     @GetMapping("/stats/max-id")
     @Operation(summary = "Максимальный ID среди викингов")
     public Optional<Integer> findMaxId() {
-        return lambdaService.findMaxId(vikingService.findAll());
+        Integer[] ids = lambdaService.toIdArray(vikingService.findAll());
+        return lambdaService.findMaxId(ids);
     }
 
     @GetMapping("/stats/even-ids")
     @Operation(summary = "Список чётных ID викингов")
     public List<Integer> getEvenIds() {
-        return lambdaService.getEvenIds(vikingService.findAll());
+        Integer[] ids = lambdaService.toIdArray(vikingService.findAll());
+        return lambdaService.getEvenIds(ids);
     }
 }

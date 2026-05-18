@@ -165,7 +165,7 @@ public class VikingStatsFrame extends JFrame {
     }
 
     private void redHairedSorted() {
-        List<Viking> list = lambdaService.getRedHairedSortedByAge(getVikings());
+        List<Viking> list = lambdaService.getRedBeardedSortedByAge(getVikings());
         if (list.isEmpty()) {
             setOutput("No red-haired vikings.");
         } else {
@@ -176,12 +176,14 @@ public class VikingStatsFrame extends JFrame {
     }
 
     private void findMaxId() {
-        Optional<Integer> maxId = lambdaService.findMaxId(getVikings());
+        Integer[] ids = lambdaService.toIdArray(getVikings());
+        Optional<Integer> maxId = lambdaService.findMaxId(ids);
         setOutput("Maximum ID among vikings: " + (maxId.isPresent() ? maxId.get() : "none"));
     }
 
     private void getEvenIds() {
-        List<Integer> evenIds = lambdaService.getEvenIds(getVikings());
+        Integer[] ids = lambdaService.toIdArray(getVikings());
+        List<Integer> evenIds = lambdaService.getEvenIds(ids);
         if (evenIds.isEmpty()) {
             setOutput("No even IDs found.");
         } else {
