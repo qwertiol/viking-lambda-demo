@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
+// новое окно для дз5 с кнопками вызывающими методы лямбда сервиса
 public class VikingStatsFrame extends JFrame {
     private final VikingService vikingService;
     private final VikingLambdaService lambdaService;

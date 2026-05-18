@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class VikingFactory {
     private final Faker faker = new Faker();
     private final Random random = new Random();
-    private final AtomicInteger idGenerator = new AtomicInteger(1);
+    private final AtomicInteger idGenerator = new AtomicInteger(1); // добавлено от меня, потокобезопасный
 
     public Viking createRandomViking() {
         return new Viking(
-                idGenerator.getAndIncrement(),
+                idGenerator.getAndIncrement(), // добавлено от меня
                 faker.name().firstName(),
                 18 + random.nextInt(43),
                 160 + random.nextInt(41),

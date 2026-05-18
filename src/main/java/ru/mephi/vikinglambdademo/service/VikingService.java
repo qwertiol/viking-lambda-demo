@@ -26,15 +26,18 @@ public class VikingService {
         return viking;
     }
 
+    // новый метод дз4
     public Viking addViking(Viking viking) {
         vikings.add(viking);
         return viking;
     }
 
+    // новый метод дз4
     public boolean deleteViking(int id) {
         return vikings.removeIf(v -> v.id() == id);
     }
 
+    // новый метод дз4
     public boolean updateViking(int id, Viking updatedViking) {
         for (int i = 0; i < vikings.size(); i++) {
             if (vikings.get(i).id() == id) {
@@ -45,11 +48,12 @@ public class VikingService {
         return false;
     }
 
+    // новый метод дз5
     public void generateMassVikings(int count) {
         if (count <= 0) return;
-        List<Viking> newVikings = IntStream.range(0, count)
-                .mapToObj(i -> vikingFactory.createRandomViking())
-                .collect(Collectors.toList());
+        List<Viking> newVikings = IntStream.range(0, count) // создает поток чисел от 0 до count-1
+                .mapToObj(i -> vikingFactory.createRandomViking()) // для каждого числа вызывает фабрику и создает викинга
+                .collect(Collectors.toList()); // собирает в промежуточный список
         vikings.addAll(newVikings);
     }
 }

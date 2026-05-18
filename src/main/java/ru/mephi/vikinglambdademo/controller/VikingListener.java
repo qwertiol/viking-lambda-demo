@@ -20,14 +20,17 @@ public class VikingListener {
         this.gui = gui;
     }
 
+    // новый метод дз4
     public void onVikingAdded(Viking viking) {
         if (gui != null) gui.addNewViking(viking);
     }
 
+    // новый метод дз4
     public void onVikingDeleted(int id) {
         if (gui != null) gui.removeVikingById(id);
     }
 
+    // новый метод дз4
     public void onVikingUpdated(Viking viking) {
         if (gui != null) gui.updateViking(viking);
     }

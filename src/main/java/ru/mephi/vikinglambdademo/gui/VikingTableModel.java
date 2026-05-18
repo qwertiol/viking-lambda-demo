@@ -17,6 +17,7 @@ public class VikingTableModel extends AbstractTableModel {
         fireTableRowsInserted(data.size() - 1, data.size() - 1);
     }
 
+    // новый метод дз4
     public void removeViking(int id) {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).id() == id) {
@@ -26,7 +27,8 @@ public class VikingTableModel extends AbstractTableModel {
             }
         }
     }
-
+    
+    // новый метод дз4  
     public void updateViking(Viking viking) {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).id() == viking.id()) {
@@ -37,6 +39,7 @@ public class VikingTableModel extends AbstractTableModel {
         }
     }
 
+    // новый метод дз4
     public void clear() {
         data.clear();
         fireTableDataChanged();

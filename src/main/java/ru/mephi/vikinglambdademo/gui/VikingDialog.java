@@ -6,6 +6,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// новое окно для дз5
 public class VikingDialog extends JDialog {
     private JTextField nameField;
     private JSpinner ageSpinner, heightSpinner;

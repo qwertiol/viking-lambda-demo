@@ -7,6 +7,7 @@ import ru.mephi.vikinglambdademo.service.VikingLambdaService;
 import javax.swing.*;
 import java.awt.*;
 
+// класс был в исходном варианте но содержал только конструктор и 2 метода
 public class VikingDesktopFrame extends JFrame {
     private final VikingService vikingService;
     private final VikingLambdaService lambdaService;
@@ -54,7 +55,7 @@ public class VikingDesktopFrame extends JFrame {
         add(bottom, BorderLayout.SOUTH);
     }
 
-    private void onCreateRandomViking() {
+    private void onCreateRandomViking() { // метод из исходной реализации
         Viking v = vikingService.createRandomViking();
         tableModel.addViking(v);
     }
@@ -114,6 +115,7 @@ public class VikingDesktopFrame extends JFrame {
         }
     }
 
+    
     private void refreshTableFromService() {
         tableModel.clear();
         vikingService.findAll().forEach(tableModel::addViking);
@@ -123,7 +125,7 @@ public class VikingDesktopFrame extends JFrame {
         new VikingStatsFrame(vikingService, lambdaService).setVisible(true);
     }
 
-    public void addNewViking(Viking v) { tableModel.addViking(v); }
+    public void addNewViking(Viking v) { tableModel.addViking(v); } // метод из исходной реализации
     public void removeVikingById(int id) { tableModel.removeViking(id); }
     public void updateViking(Viking v) { tableModel.updateViking(v); }
 }

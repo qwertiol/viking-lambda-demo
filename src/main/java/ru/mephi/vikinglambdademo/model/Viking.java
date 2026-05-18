@@ -6,8 +6,8 @@ import java.util.List;
 
 @Schema(description = "Viking model")
 public record Viking(
-        @Schema(description = "Integer ID", example = "1")
-        int id,
+        @Schema(description = "Integer ID", example = "1") 
+        int id, // новое поле от меня
         @Schema(description = "Viking name", example = "Bjorn")
         String name,
         @Schema(description = "Age", example = "31")

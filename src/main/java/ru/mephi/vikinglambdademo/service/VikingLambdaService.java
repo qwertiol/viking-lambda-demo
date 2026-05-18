@@ -7,14 +7,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
-public class VikingLambdaService {
+public class VikingLambdaService { // новый класс для дз 5 - вся логика
 
     public long countByAgeCondition(List<Viking> vikings, Predicate<Integer> agePredicate) {
+        // 1. создаем поток из списка
+        // 2. оставляем только тех кто прошел проверку
+        // 3. терминальная оепрация каунт закрывает поток и возвращает лонг
         return vikings.stream().filter(v -> agePredicate.test(v.age())).count();
     }
 
     public long countOlderThan(List<Viking> vikings, int age) {
-        return countByAgeCondition(vikings, a -> a > age);
+        return countByAgeCondition(vikings, a -> a > age); // переиспользуем метод выше
     }
 
     public long countYoungerThan(List<Viking> vikings, int age) {
@@ -30,15 +33,15 @@ public class VikingLambdaService {
     }
 
     public long countByBeardAndHair(List<Viking> vikings, BeardStyle beard, HairColor hair) {
-        return vikings.stream()
+        return vikings.stream() // оставляет только тех, кто подходит по обоим параметрам
                 .filter(v -> v.beardStyle() == beard && v.hairColor() == hair)
                 .count();
     }
 
     public long countWithOneOrTwoAxes(List<Viking> vikings) {
-        return vikings.stream()
+        return vikings.stream() // внешний стрим считает топоры
                 .filter(v -> {
-                    long axeCount = v.equipment().stream()
+                    long axeCount = v.equipment().stream() // внутренний стрим ищет топоры
                             .filter(item -> item.name().equalsIgnoreCase("Axe"))
                             .count();
                     return axeCount == 1 || axeCount == 2;
@@ -47,8 +50,10 @@ public class VikingLambdaService {
     }
 
     public Optional<Viking> getRandomVikingHeightAbove180(List<Viking> vikings) {
+        // сначала получим всех викингов выше 180
         List<Viking> tall = vikings.stream().filter(v -> v.heightCm() > 180).collect(Collectors.toList());
         if (tall.isEmpty()) return Optional.empty();
+        // если такие есть (список не пустой) среди них рандомно выберем
         Random rand = new Random();
         return Optional.of(tall.get(rand.nextInt(tall.size())));
     }
@@ -61,12 +66,14 @@ public class VikingLambdaService {
 
     public List<Viking> getRedHairedSortedByAge(List<Viking> vikings) {
         return vikings.stream()
-                .filter(v -> v.hairColor() == HairColor.Red)
-                .sorted(Comparator.comparingInt(Viking::age))
+                .filter(v -> v.hairColor() == HairColor.Red) // отбираем
+                .sorted(Comparator.comparingInt(Viking::age)) // сортируем
                 .collect(Collectors.toList());
     }
 
     public Optional<Integer> findMaxId(List<Viking> vikings) {
+        // сначала получаем инт из викинга
+        // потом выбираем макс
         return vikings.stream().map(Viking::id).max(Comparator.naturalOrder());
     }
 
