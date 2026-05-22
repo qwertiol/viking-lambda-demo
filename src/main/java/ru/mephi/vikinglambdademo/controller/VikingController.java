@@ -150,8 +150,8 @@ public class VikingController {
     }
 
     @GetMapping("/stats/even-ids")
-    @Operation(summary = "Список чётных ID викингов")
-    public List<Integer> getEvenIds() {
+    @Operation(summary = "Массив чётных ID викингов")
+    public Integer[] getEvenIds() {
         Integer[] ids = lambdaService.toIdArray(vikingService.findAll());
         return lambdaService.getEvenIds(ids);
     }

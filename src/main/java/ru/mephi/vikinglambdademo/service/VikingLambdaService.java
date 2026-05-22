@@ -81,14 +81,15 @@ public class VikingLambdaService {
         return Optional.of(result);
     }
 
-    public List<Integer> getEvenIds(Integer[] ids) {
+    public Integer[] getEvenIds(Integer[] ids) {
         Predicate<Integer> isEven = id -> id % 2 == 0;
-        List<Integer> result = new ArrayList<>();
+        List<Integer> temp = new ArrayList<>();
         for (Integer id : ids) {
             if (isEven.test(id)) {
-                result.add(id);
+                temp.add(id);
             }
         }
-        return result;
+        
+        return temp.toArray(new Integer[0]);
     }
 }

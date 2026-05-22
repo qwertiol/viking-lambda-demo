@@ -183,11 +183,11 @@ public class VikingStatsFrame extends JFrame {
 
     private void getEvenIds() {
         Integer[] ids = lambdaService.toIdArray(getVikings());
-        List<Integer> evenIds = lambdaService.getEvenIds(ids);
-        if (evenIds.isEmpty()) {
+        Integer[] evenIds = lambdaService.getEvenIds(ids); 
+        if (evenIds.length == 0) {
             setOutput("No even IDs found.");
         } else {
-            setOutput("Even IDs: " + evenIds);
+            setOutput("Even IDs: " + java.util.Arrays.toString(evenIds));
         }
     }
 }
